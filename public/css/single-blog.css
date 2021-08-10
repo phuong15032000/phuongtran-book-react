@@ -1,0 +1,101 @@
+
+  .post-blog {
+    margin-bottom: 60px;
+    padding-bottom: 40px;
+  }
+  .post-blog .blog-image {
+    overflow: hidden;
+  }
+  .post-blog .blog-image img {
+    width: 100%;
+    height: auto;
+  }
+  .post-blog .blog-content span {
+    color: #aaaaaa;
+    margin-right: 10px;
+    font-size: 14px;
+  }
+  .post-blog .blog-content span a {
+    color: #aaaaaa;
+  }
+  .post-blog .blog-content span a:hover {
+    color: #00a8d6;
+  }
+  .post-blog .blog-content h3 {
+    margin: 10px 0 25px 0;
+    font-size: 24px;
+    line-height: 30px;
+    font-weight: 600;
+  }
+  .post-blog .blog-content h3 a {
+    color: #31373a;
+  }
+  .post-blog .blog-content h3 a:hover {
+    color: #00a8d6;
+  }
+  #blog-comments {
+    margin-top: 60px;
+    margin-bottom: 100px;
+  }
+  #blog-comments .blog-comments-content {
+    margin-top: 50px;
+  }
+  #blog-comments .media {
+    display: block;
+    margin-top: 30px;
+    border-bottom: 1px solid #dce4e6;
+  }
+  #blog-comments .media .media {
+    padding-top: 30px;
+    border-top: 1px solid #dce4e6;
+    border-bottom: 0;
+  }
+  #blog-comments .media-object {
+    margin-right: 10px;
+  }
+  #blog-comments .media-heading h4 {
+    display: inline-block;
+    margin: 0 15px 0 0;
+    font-size: 16px;
+    font-weight: 600;
+  }
+  #blog-comments .media-heading a {
+    color: #aaaaaa;
+    font-size: 14px;
+  }
+  #blog-comments .media-heading a span:after {
+    content: '/';
+    color: #aaaaaa;
+    font-size: 13px;
+    margin: 0 10px;
+  }
+  #blog-comments .media-heading a span:last-of-type:after {
+    content: '';
+  }
+  
+  .comment-form {
+    margin-bottom: 100px;
+  }
+  .comment-form .widget-inner {
+    margin-top: 40px;
+  }
+  .comment-form #email-id, .comment-form #name-id, .comment-form #site-id, .comment-form textarea {
+    width: 100%;
+    min-width: 100%;
+    max-width: 100%;
+  }
+  .comment-form textarea {
+    min-width: 100%;
+    max-width: 100%;
+  }
+  .comment-form input.mainBtn {
+    width: auto;
+  }
+  .meta-date:after, .meta-comments:after {
+    content: '/';
+    margin-left: 10px;
+  }
+  .comment-form button {
+    width: 10%;
+    margin-right: 1.5%;
+  }

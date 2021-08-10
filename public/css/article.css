@@ -1,0 +1,13 @@
+section.special,
+article.special {
+    text-align: center;
+}
+
+header p {
+    font-size: 0.7em;
+    font-weight: 400;
+    letter-spacing: 0.25em;
+    line-height: 2.5;
+    margin-top: -1em;
+    text-transform: uppercase;
+}
