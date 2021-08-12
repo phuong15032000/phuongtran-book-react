@@ -13,7 +13,7 @@ class Register extends Component {
         this.onChangeAuthor = this.onChangeAuthor.bind(this);
         this.onChangeTitle = this.onChangeTitle.bind(this);
         this.onChangeDescription = this.onChangeDescription.bind(this);
-        this.onChangeImgThumpUrl = this.onChangeImgThumpUrl.bind(this);
+        this.onChangeImage = this.onChangeImage.bind(this);
         this.deleteBook = this.deleteBook.bind(this);
         this.state = {
             tempTags: [],
@@ -93,7 +93,7 @@ class Register extends Component {
     onChangeDescription(e) {
         this.state.book.description = e.target.value
     }
-    onChangeImgThumpUrl(e) {
+    onChangeImage(e) {
         this.state.book.image = e.target.value
     }
     logout() {
@@ -136,8 +136,9 @@ class Register extends Component {
                             <ul className="nav nav-stacked templatemo-nav">
                                 <li><a href="/index"><i className="fa fa-home" />Homepage</a></li>
                                 <li><a href="/add-book"><i className="fa fa-pencil" />Add book</a></li>
-                                <li><a href="/mybooks"  className="active"><i className="fa fa-sticky-note" />My books</a></li>
-                                <li><a href="/manage-book"><i className="fa fa-sticky-note" />Book manager</a></li>
+                                <li><a href="/mybooks" className="active"><i className="fa fa-sticky-note" />My books</a></li>
+                                <li><a href="/books-management"><i className="fa fa-sticky-note" />Books</a></li>
+                                <li><a href="/users-management"><i className="fa fa-sticky-note" />Users</a></li>
                                 <li><a onClick={this.logout}><i className="fa fa-pencil-square-o" aria-hidden="true" />Log out</a></li>
                             </ul>
                         </div>
@@ -188,7 +189,7 @@ class Register extends Component {
                                                     required="required"
                                                     type="text"
                                                     className="form-control"
-                                                    onChange={this.onChangeImgThumpUrl}
+                                                    onChange={this.onChangeImage}
                                                 />
                                             </div>
                                             <div className="form-group">
@@ -227,7 +228,7 @@ class Register extends Component {
                                             }}
                                         />
                                     </Form>
-                                    <button onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.deleteBook(this.state.book.id)}}>Delete this book</button>
+                                    <button onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.deleteBook(this.state.book.id) }}>Delete this book</button>
                                 </div>
                             </div>
                         </div>

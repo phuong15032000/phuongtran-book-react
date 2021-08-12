@@ -1,23 +1,84 @@
 import React, { Component } from "react";
 import { withRouter } from 'react-router-dom';
-import AuthService from "../services/auth.service";
+import AuthService from '../services/auth.service'
 import BookDataService from '../services/book.service'
-class Admin_browse extends Component {
+import { Pagination } from '@material-ui/lab';
+import ReactPaginate from 'react-paginate';
+class BookManagement extends Component {
     constructor(props) {
         super(props);
-        this.logout = this.logout.bind(this);
+        this.handlePageChange = this.handlePageChange.bind(this);
+        this.handlePageSizeChange = this.handlePageSizeChange.bind(this);
+        //this.logout = this.logout.bind(this);
+        this.onChangeKeyword = this.onChangeKeyword.bind(this);
+        this.onChangeOrderBy = this.onChangeOrderBy.bind(this);
         this.state = {
-            books: []
+            books: [],
+            page: 1,
+            count: 0,
+            pageSize: 3,
+            keyword: "",
+            orderBy: ""
         };
+        this.pageSizes = [3, 6, 9];
+    }
+    enableBook(id) {
+        BookDataService.enableBook(id).then(
+            response => {
+                console.log(response.data)
+                this.retrieveBooks();
+            })
+    }
+    disableBook(id) {
+        BookDataService.disableBook(id).then(
+            response => {
+                console.log(response.data)
+                this.retrieveBooks();
+            })
+    }
+    deleteBook(id) {
+        BookDataService.deleteBook(id)
+            .then(response => {
+                console.log(response.data)
+                this.retrieveBooks();
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }
+    onChangeOrderBy(e) {
+        this.setState(
+            {
+                orderBy: e.target.value
+            },
+            () => {
+                this.retrieveBooks();
+            }
+        );
+    }
+    onChangeKeyword(e) {
+        this.setState(
+            {
+                keyword: e.target.value
+            },
+            () => {
+                this.retrieveBooks();
+            }
+        );
     }
     componentDidMount() {
-        this.retrievePosts();
+        this.retrieveBooks();
     }
-    retrievePosts() {
-        BookDataService.getAllBook()
+    retrieveBooks() {
+        const { page, pageSize, keyword, orderBy } = this.state;
+        const params = this.getRequestParams(page, pageSize, keyword, orderBy);
+        console.log(params)
+        BookDataService.findAll(params)
             .then(response => {
+                const { books, totalPages } = response.data;
                 this.setState({
-                    books: response.data
+                    books: books,
+                    count: totalPages
                 });
                 console.log(response.data);
             })
@@ -25,24 +86,51 @@ class Admin_browse extends Component {
                 console.log(e);
             });
     }
+    getRequestParams(page, pageSize, keyword, orderBy) {
+        let params = {};
 
-    deleteBook(id) {
-        BookDataService.deleteBook(id)
-            .then(response => {
-                console.log(response.data)
-                this.retrievePosts();
-            })
-            .catch(e => {
-                console.log(e);
-            });
+        if (page) {
+            params["page"] = page - 1;
+        }
+
+        if (pageSize) {
+            params["size"] = pageSize;
+        }
+
+        if (keyword) {
+            params["keyword"] = keyword;
+        } else {
+            params["keyword"] = "";
+        }
+
+        if (orderBy) {
+            params["orderBy"] = orderBy;
+        } else {
+            params["orderBy"] = "";
+        }
+
+        return params;
     }
-    toSqlDatetime = (inputDate) => {
-        const date = new Date(inputDate)
-        const dateWithOffest = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
-        return inputDate
-            .toISOString()
-            .slice(0, 16)
-            .replace('T', ' ')
+    handlePageChange(event, value) {
+        this.setState(
+            {
+                page: value,
+            },
+            () => {
+                this.retrieveBooks();
+            }
+        );
+    }
+    handlePageSizeChange(event) {
+        this.setState(
+            {
+                pageSize: event.target.value,
+                page: 1
+            },
+            () => {
+                this.retrieveBooks();
+            }
+        );
     }
     logout() {
         if (window.confirm("Do you want to logout?") == true) {
@@ -50,21 +138,14 @@ class Admin_browse extends Component {
             this.props.history.push("/login");
         }
     }
-    enableBook(id) {
-        BookDataService.enableBook(id).then(
-            response => {
-                console.log(response.data)
-                this.retrievePosts();
-            })
+    toSqlDatetime = (inputDate) => {
+        const date = new Date(inputDate)
+        const dateWithOffest = new Date(date.getTime() - (date.getTimezoneOffset() * 60000))
+        return dateWithOffest
+            .toISOString()
+            .slice(0, 16)
+            .replace('T', ' ')
     }
-    disableBook(id) {
-        BookDataService.disableBook(id).then(
-            response => {
-                console.log(response.data)
-                this.retrievePosts();
-            })
-    }
-
     render() {
         return (
             <div>
@@ -90,7 +171,8 @@ class Admin_browse extends Component {
                                 <li><a href="/index"><i className="fa fa-home" />Homepage</a></li>
                                 <li><a href="/add-book"><i className="fa fa-pencil" />Add book</a></li>
                                 <li><a href="/mybooks"><i className="fa fa-sticky-note" />My books</a></li>
-                                <li><a href="/manage-book"  className="active"><i className="fa fa-pen-square"  />Book manager</a></li>
+                                <li><a href="/books-management"  className="active"><i className="fa fa-sticky-note" />Books</a></li>
+                                <li><a href="/users-management"><i className="fa fa-sticky-note" />Users</a></li>
                                 <li><a onClick={this.logout}><i className="fa fa-pencil-square-o" aria-hidden="true" />Log out</a></li>
                             </ul>
                         </div>
@@ -99,46 +181,105 @@ class Admin_browse extends Component {
                     <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg right-container">
                         <h1 className="logo-right hidden-xs margin-bottom-60">Book</h1>
                         <div className="tm-right-inner-container">
-                            <h1 className="templatemo-header">Books management</h1>
-
-                            <table style={{ width: "100%", tableLayout: "fixed" }} class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">Title</th>
-                                        <th>Created at</th>
-                                        <th scope="col">Author</th>
-                                        <th scope="col">Enabled</th>
-                                        <th scope="col">Action</th>
-                                    </tr>
-                                </thead>
-
-                                <tbody>
-                                    {this.state.books.map((book, index) => (
+                            <h1 className="templatemo-header">Welcome to Novahub Books</h1>
+                            <div>
+                                <div className="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                    <table style={{ width: "100%", tableLayout: "fixed" }}>
                                         <tr>
-                                            <th scope="row"><a href={"/edit-book/" + book.id}>{book.title}</a></th>
-                                            <td>{this.toSqlDatetime(new Date(book.createdAt))}</td>
-                                            <td>{book.author}</td>
-                                            <td>
-                                                {book.enabled
-                                                    ? <button style={{ width: "80px" }} onClick={() => this.disableBook(book.id)} className="btn btn-success">Enabled </button>
-                                                    : <button style={{ width: "80px" }} onClick={() => this.enableBook(book.id)} className="btn btn-danger">Disabled</button>
-                                                }
+                                            <td><label >Search (title or author): </label></td>
+                                            <td><input
+                                                style={{ marginBottom: "5px" }}
+                                                type="text"
+                                                onChange={this.onChangeKeyword}
+                                                className="form-control"
+                                                placeholder="Search by title or author"></input>
                                             </td>
-                                            <th>
-                                                <a href={"/edit-book/" + book.id} class="btn btn-primary">Edit</a>
-                                                &nbsp;
-                                                <button class="btn btn-primary" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this book?')) this.deleteBook(book.id) }}>Delete</button>
-                                            </th>
                                         </tr>
+                                        <tr>
+                                            <td><label >Order by: </label></td>
+                                            <td>
+                                                <select style={{ marginBottom: "5px" }} className="form-control" onChange={this.onChangeOrderBy} value={this.state.orderBy}>
+                                                    <option value="">None</option>
+                                                    <option value="title">Title</option>
+                                                    <option value="author">Author</option>
+                                                    <option value="createdAt">Date created</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Books per page: </label></td>
+                                            <td>
 
-                                    ))}
-                                </tbody>
-                            </table>
+                                                <select style={{ marginBottom: "5px" }} className="form-control" onChange={this.handlePageSizeChange} value={this.state.pageSize}>
+                                                    {this.pageSizes.map((size) => (
+                                                        <option key={size} value={size}>
+                                                            {size}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><label>Page: </label></td>
+                                            <td>
+                                                <Pagination
+                                                    showLastButton
+                                                    className="my-3"
+                                                    count={this.state.count}
+                                                    page={this.state.page}
+                                                    siblingCount={1}
+                                                    boundaryCount={1}
+                                                    variant="outlined"
+                                                    // shape="rounded"
+                                                    onChange={this.handlePageChange}
+                                                />
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <br /><br /><br />
+                            <div>
+                                <table style={{ width: "100%", tableLayout: "fixed" }} class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Title</th>
+                                            <th>Created at</th>
+                                            <th scope="col">Author</th>
+                                            <th scope="col">Enabled</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        {this.state.books.map((book, index) => (
+                                            <tr>
+                                                <th scope="row"><a href={"/edit-book/" + book.id}>{book.title}</a></th>
+                                                <td>{this.toSqlDatetime(new Date(book.createdAt))}</td>
+                                                <td>{book.author}</td>
+                                                <td>
+                                                    {book.enabled
+                                                        ? <button style={{ width: "80px" }} onClick={() => this.disableBook(book.id)} className="btn btn-success">Enabled </button>
+                                                        : <button style={{ width: "80px" }} onClick={() => this.enableBook(book.id)} className="btn btn-danger">Disabled</button>
+                                                    }
+                                                </td>
+                                                <th>
+                                                    <a href={"/edit-book/" + book.id} class="btn btn-primary">Edit</a>
+                                                    &nbsp;
+                                                    <button class="btn btn-primary" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this book?')) this.deleteBook(book.id) }}>Delete</button>
+                                                </th>
+                                            </tr>
+
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                             <footer>
                                 <p className="col-lg-6 col-md-6 col-sm-12 col-xs-12 templatemo-copyright">Copyright © 2021 by phuongtran@novahub.vn
+                                    {/* Credit: www.templatemo.com */}
                                 </p>
                                 <p className="col-lg-6 col-md-6 col-sm-12 col-xs-12 templatemo-social">
-                                    <a href="fb.com/trandiepphuong"><i className="fa fa-facebook" /></a>
+                                    <a href="//facebook.com/trandiepphuong"><i className="fa fa-facebook" /></a>
                                     <a href="#"><i className="fa fa-twitter" /></a>
                                     <a href="#"><i className="fa fa-google-plus" /></a>
                                     <a href="#"><i className="fa fa-youtube" /></a>
@@ -147,10 +288,10 @@ class Admin_browse extends Component {
                             </footer>
                         </div>
                     </div>
+                    {/* right section */}
                 </div>
-            </div>
+            </div >
         );
     }
 }
-
-export default withRouter(Admin_browse);
+export default withRouter(BookManagement);

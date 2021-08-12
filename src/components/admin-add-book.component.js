@@ -38,7 +38,7 @@ class Register extends Component {
         this.form.validateAll();
 
         if (this.checkBtn.context._errors.length === 0) {
-            BookDataService.addBook(
+            BookDataService.addBookAsAdmin(
                 this.state.book
             ).then(
                 response => {
@@ -113,7 +113,8 @@ class Register extends Component {
                                 <li><a href="/index"><i className="fa fa-home" />Homepage</a></li>
                                 <li><a href="/add-book"  className="active"><i className="fa fa-pencil" />Add book</a></li>
                                 <li><a href="/mybooks"><i className="fa fa-sticky-note" />My books</a></li>
-                                <li><a href="/manage-book"><i className="fa fa-sticky-note" />Book manager</a></li>
+                                <li><a href="/books-management"><i className="fa fa-sticky-note" />Books</a></li>
+                                <li><a href="/users-management"><i className="fa fa-sticky-note" />Users</a></li>
                                 <li><a onClick={this.logout}><i className="fa fa-pencil-square-o" aria-hidden="true" />Log out</a></li>
                             </ul>
                         </div>

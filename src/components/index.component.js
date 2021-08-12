@@ -161,14 +161,14 @@ class Index extends Component {
                                         <tr>
                                             <td><label >Search (title or author): </label></td>
                                             <td><input
-                                            style={{marginBottom: "5px"}}
-                                             type="text"
+                                                style={{ marginBottom: "5px" }}
+                                                type="text"
                                                 onChange={this.onChangeKeyword}
                                                 className="form-control"
                                                 placeholder="Search by title or author"></input>
                                             </td>
                                         </tr>
-                                        <tr>
+                                        {/* <tr>
                                             <td><label >Order by: </label></td>
                                             <td>
                                                 <select style={{marginBottom: "5px"}} className="form-control" onChange={this.onChangeOrderBy} value={this.state.orderBy}>
@@ -191,12 +191,12 @@ class Index extends Component {
                                                     ))}
                                                 </select>
                                             </td>
-                                        </tr>
-                                        <tr>
+                                        </tr> */}
+                                        {/* <tr>
                                             <td><label>Page: </label></td>
                                             <td>
                                                 <Pagination
-                                                    showLastButton 
+                                                    showLastButton
                                                     className="my-3"
                                                     count={this.state.count}
                                                     page={this.state.page}
@@ -206,33 +206,21 @@ class Index extends Component {
                                                     // shape="rounded"
                                                     onChange={this.handlePageChange}
                                                 />
-                                                {/* <ReactPaginate
-                                                    totalPages={this.state.page}
-                                                    previousLabel={'Previous'}
-                                                    nextLabel={'next'}
-                                                    breakLabel={'...'}
-                                                    breakClassName={'break-me'}
-                                                    pageCount={this.state.count}
-                                                    marginPagesDisplayed={2}
-                                                    pageRangeDisplayed={5}
-                                                    onPageChange={this.handlePageChange}
-                                                    containerClassName={'pagination'}
-                                                    activeClassName={'active'}
-                                                /> */}
                                             </td>
-                                        </tr>
+                                        </tr> */}
                                     </table>
                                 </div>
                             </div>
-                            <br /><br /><br /><br /><br /><br /><br /><br /><br />
+                            <br /><br /><br />
                             <div>
                                 {this.state.books.map((book, index) => (
                                     <div className="row" style={{ minHeight: "100%" }}>
                                         <article className="post" style={{ minHeight: "100%" }}>
                                             <header style={{ minHeight: "100%" }}>
-                                                <a style={{ margin: "10px 10px 10px 10px" }} href={"/book/" + book.id}><img style={{ height: "175px", width: "130px", margin: "10% 10% 10% 10%" }} src={book.image} alt="" /></a>
+                                                <a style={{ margin: "10px 10px 10px 10px" }} href={"/book/" + book.id}><img style={{ height: "210px", width: "130px", margin: "10% 10% 10% 10%" }} src={book.image} alt="" /></a>
                                                 <div className="title" style={{ float: "left", margin: "2% 5% 2% 2%" }}>
                                                     <h2><a className="a-title" href={"/book/" + book.id}>{book.title}</a></h2>
+                                                    <small>Upload at: {this.toSqlDatetime(new Date(book.createdAt))}</small>                               
                                                     <h2><small>By: <a className="a-title" href={"/author/" + book.author}>{book.author}</a></small></h2>
                                                     <p className="fifty-chars" style={{ fontSize: "16px", fontFamily: "Georgia" }}>{book.description}</p>
                                                 </div>
@@ -241,6 +229,18 @@ class Index extends Component {
                                     </div>
                                 ))}
                             </div>
+                            <Pagination
+                            style={{textAlign:"center"}}
+                                showLastButton
+                                className="my-3"
+                                count={this.state.count}
+                                page={this.state.page}
+                                siblingCount={1}
+                                boundaryCount={1}
+                                variant="outlined"
+                                // shape="rounded"
+                                onChange={this.handlePageChange}
+                            />
                             <footer>
                                 <p className="col-lg-6 col-md-6 col-sm-12 col-xs-12 templatemo-copyright">Copyright © 2021 by phuongtran@novahub.vn
                                     {/* Credit: www.templatemo.com */}

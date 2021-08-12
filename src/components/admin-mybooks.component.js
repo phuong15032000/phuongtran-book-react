@@ -146,8 +146,9 @@ class Mybooks extends Component {
                             <ul className="nav nav-stacked templatemo-nav">
                                 <li><a href="/index"><i className="fa fa-home" />Homepage</a></li>
                                 <li><a href="/add-book"><i className="fa fa-pencil" />Add book</a></li>
-                                <li><a href="/mybooks"  className="active"><i className="fa fa-sticky-note" />My books</a></li>
-                                <li><a href="/manage-book"><i className="fa fa-sticky-note" />Book manager</a></li>
+                                <li><a href="/mybooks" className="active"><i className="fa fa-sticky-note" />My books</a></li>
+                                <li><a href="/books-management"><i className="fa fa-sticky-note" />Books</a></li>
+                                <li><a href="/users-management"><i className="fa fa-sticky-note" />Users</a></li>
                                 <li><a onClick={this.logout}><i className="fa fa-pencil-square-o" aria-hidden="true" />Log out</a></li>
                             </ul>
                         </div>

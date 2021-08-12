@@ -41,6 +41,10 @@ class Login extends Component {
         if (this.checkBtn.context._errors.length === 0) {
             AuthService.login(this.state.login.username, this.state.login.password).then(
                 () => {
+                    this.setState({
+                        loading: false,
+                        message: "Login succesfully!"
+                    });
                     this.props.history.push("/index");
                     window.location.reload();
                 },
@@ -51,11 +55,36 @@ class Login extends Component {
                             error.response.data.message) ||
                         error.message ||
                         error.toString();
-
-                    this.setState({
-                        loading: false,
-                        message: resMessage
-                    });
+                    if (resMessage === "Request failed with status code 401") {
+                        this.setState({
+                            loading: false,
+                            message: "This account has been disabled!"
+                        });
+                    }
+                    else if (resMessage === "Request failed with status code 403"){
+                        this.setState({
+                            loading: false,
+                            message: "Username or password is incorrect!"
+                        });
+                    }
+                    else if (resMessage === "Request failed with status code 500"){
+                        this.setState({
+                            loading: false,
+                            message: "Username is not available!"
+                        });
+                    }
+                    else if (resMessage === "Network Error"){
+                        this.setState({
+                            loading: false,
+                            message: "Cannot connect to server! Please try again later."
+                        });
+                    }
+                    else {
+                        this.setState({
+                            loading: false,
+                            message: "Cannot connect to server! Please try again later."
+                        });
+                    }
                 }
             );
         } else {

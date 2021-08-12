@@ -3,6 +3,9 @@ import http from "../http-common";
 import authHeader from "./auth-header"
 const API_URL = 'http://localhost:8080/api';
 class BookDataService {
+    findAll(params) {
+        return axios.get(API_URL + `/admin/books?page=` + params["page"] + `&size=` + params["size"] + `&keyword=` + params["keyword"] + `&orderBy=` + params["orderBy"], { headers: authHeader() })
+    }
     getEnableBooks(params) {
         return axios.get(API_URL + `/books?page=` + params["page"] + `&size=` + params["size"] + `&keyword=` + params["keyword"] + `&orderBy=` + params["orderBy"], { headers: authHeader() })
     }
@@ -20,6 +23,9 @@ class BookDataService {
     }
     addBook(book) {
         return axios.post(API_URL + `/books`, book, { headers: authHeader() })
+    }
+    addBookAsAdmin(book) {
+        return axios.post(API_URL + `/admin/books`, book, { headers: authHeader() })
     }
     editBook(book, id) {
         return axios.put(API_URL + `/books/`+id, book, { headers: authHeader() })
