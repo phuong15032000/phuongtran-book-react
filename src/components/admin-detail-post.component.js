@@ -1,8 +1,9 @@
-
+import Button from 'react-bootstrap/Button'
 import bookService from "../services/book.service";
 import React, { Component } from "react";
 import { withRouter } from 'react-router-dom';
-import AuthService from "../services/auth.service";
+import AuthService from "../services/auth.service"
+import Modal from "react-bootstrap/Modal";
 class SingleBook extends Component {
 
     constructor(props) {
@@ -38,12 +39,40 @@ class SingleBook extends Component {
         };
         this.pageSizes = [3, 6, 9];
     }
+    openModal = () => this.setState({
+        isOpen: true
+    });
+    closeModal = () => this.setState({
+        isOpen: false, 
+        currentComment: {
+            message: null,
+            user: AuthService.getCurrentUser()
+        }
+    });
     componentDidMount() {
         this.getBookById();
     }
     onChangeComment(e) {
         this.state.currentComment.message = e.target.value
+        // if (this.state.currentComment.message === "" || this.state.currentComment.message == null) {
+        //     document.getElementById("edit-btn").disabled = true
+        // }
         console.log(this.state.currentComment)
+    }
+    editComment(id) {
+        bookService.editComment(id, this.state.currentComment)
+            .then(response => {
+                this.state.currentComment = {
+                    message: null,
+                    user: AuthService.getCurrentUser()
+                };
+                this.closeModal();
+                this.getBookById();
+                document.getElementById("textareacomment").value = null
+            })
+            .catch(e => {
+                console.log(e);
+            });
     }
     deleteComment(id) {
         bookService.deleteComment(id)
@@ -53,7 +82,7 @@ class SingleBook extends Component {
                     user: AuthService.getCurrentUser()
                 };
                 this.getBookById();
-                document.getElementById("textareacomment").value = ""
+                document.getElementById("textareacomment").value = null
                 console.log(response.data);
             })
             .catch(e => {
@@ -101,6 +130,22 @@ class SingleBook extends Component {
             this.props.history.push("/login");
         }
     }
+    getCommentById(id) {
+        bookService.getCommentById(id)
+            .then(response => {
+                this.setState({
+                    currentComment: response.data
+                });
+                console.log("current comment: " + this.state.currentComment.message);
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }
+    onClickEditComment(event, id) {
+        this.state.isOpen = true
+        this.getCommentById(id);
+    }
     render() {
         return (
             <div>
@@ -127,12 +172,11 @@ class SingleBook extends Component {
                         <h1 className="logo-left hidden-xs margin-bottom-60">Novahub</h1>
                         <div className="tm-left-inner-container">
                             <ul className="nav nav-stacked templatemo-nav">
-                                <li><a href="/index" className="active"><i className="fa fa-home" />Homepage</a></li>
-                                <li><a href="/add-book"><i className="fa fa-pencil" />Add book</a></li>
+                                <li><a href="/index"><i className="fa fa-home" />Homepage</a></li>
                                 <li><a href="/mybooks"><i className="fa fa-sticky-note" />My books</a></li>
-                                <li><a href="/books-management"><i className="fa fa-sticky-note" />Books</a></li>
+                                <li><a href="/books-management" className="active"><i className="fa fa-sticky-note" />Books</a></li>
                                 <li><a href="/users-management"><i className="fa fa-sticky-note" />Users</a></li>
-                                <li><a onClick={this.logout}><i className="fa fa-pencil-square-o" aria-hidden="true" />Log out</a></li>
+                                <li><a href="javascript:void(0);" onClick={this.logout}><i className="fa fa-pencil-square-o" aria-hidden="true" />Log out</a></li>
                             </ul>
                         </div>
                     </div>
@@ -143,11 +187,10 @@ class SingleBook extends Component {
                             <div className="row">
                                 <div className="col-md-12">
                                     <div className="post-blog">
-                                        <div className="blog-content">
+                                        <div className="blog-content" style={{ marginBottom: "2%" }}>
                                             <h3>{this.state.book.title}</h3>
-                                            <span className="meta-date"><a href="#">{this.toSqlDatetime(new Date(this.state.book.createdAt))}</a></span>
-                                            <span className="meta-comments"><a href="#blog-comments">{this.state.book.commentList.length} Comments</a></span>
-                                            <span className="meta-author"><a href="#blog-author">By: {this.state.book.author}</a></span><br /><br />
+                                            <h5>By: <a href="#blog-author">{this.state.book.author}</a></h5>
+                                            <span>{this.toSqlDatetime(new Date(this.state.book.createdAt))}</span>
                                         </div> {/* /.blog-content */}
                                         <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                             <img style={{ height: "100%", width: "100%", float: "left" }} src={this.state.book.image} alt="" />
@@ -175,7 +218,7 @@ class SingleBook extends Component {
                                                             <div className="media-body">
                                                                 <div className="media-heading">
                                                                     <h4>{comment.user.email}</h4>
-                                                                    <a href="#"><span>{this.toSqlDatetime(new Date(comment.createdAt))}</span></a>
+                                                                    <span>{this.toSqlDatetime(new Date(comment.createdAt))}</span>
                                                                 </div>
                                                                 <p style={{ textAlign: "justify" }}>{comment.message}</p>
                                                             </div>
@@ -187,10 +230,26 @@ class SingleBook extends Component {
                                                             </div>
                                                             <div className="media-body">
                                                                 <div className="media-heading">
-                                                                    <h4>{comment.user.email} <button onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.deleteComment(comment.id) }} style={{ width: "100px" }} className="btn btn-success">Delete</button></h4>
-                                                                    <a href="#"><span>{this.toSqlDatetime(new Date(comment.createdAt))}</span></a>
+                                                                    <h4>{comment.user.email} <span> (you)</span></h4>
+                                                                    <span>{this.toSqlDatetime(new Date(comment.createdAt))}</span>
+                                                                    <br />
+                                                                    <span><a href="javascript:void(0);" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this item?')) this.deleteComment(comment.id) }} >Delete&nbsp;</a></span>
+                                                                    <span><a onClick={(event) => { this.getCommentById(comment.id); this.openModal(); }} href="javascript:void(0);">Edit</a></span>
+                                                                    <Modal show={this.state.isOpen} onHide={this.closeModal} style={{ opacity: 1, marginLeft: "5%", paddingTop: "10%" }} >
+                                                                        <Modal.Header>
+                                                                            <Modal.Title>Edit comment
+                                                                                <a href="javascript:void(0);" style={{ float: "right" }} onClick={() => this.closeModal()}>X</a></Modal.Title>
+                                                                        </Modal.Header>
+                                                                        <Modal.Body>
+                                                                            <textarea style={{ minHeight: "120px", minWidth: "100%", maxWidth: "100%" }} name="comment" rows={5} defaultValue={this.state.currentComment.message} onChange={this.onChangeComment} />
+                                                                        </Modal.Body>
+                                                                        <Modal.Footer style={{ paddingBottom: "8%", paddingTop: "-10%" }}>
+                                                                            <button onClick={(event) => { this.editComment(comment.id); this.closeModal(); }} className="btn btn-success" style={{ width: "50px", marginRight: "2%" }} id="edit-btn">Edit</button>
+                                                                        </Modal.Footer>
+                                                                    </Modal>
                                                                 </div>
                                                                 <p style={{ textAlign: "justify" }}>{comment.message}</p>
+
                                                             </div>
                                                         </div>
                                                     }
@@ -209,9 +268,9 @@ class SingleBook extends Component {
                                                 <div className="col-md-12">
                                                     <p>
                                                         <label htmlFor="comment">Your comment:</label>
-                                                        <textarea id="textareacomment" name="comment" id="comment" rows={5} defaultValue={""} onChange={this.onChangeComment} />
+                                                        <textarea id="textareacomment" name="comment" rows={5} defaultValue={""} onChange={this.onChangeComment} />
                                                     </p>
-                                                    <button onClick={() => { this.addComment() }} style={{ color: "black" }} className="btn btn-light">Comment</button>
+                                                    <Button onClick={() => { this.addComment() }} style={{ color: "white" }} className="btn btn-light">Comment</Button>
                                                 </div>
                                             </div>
                                         </div> {/* /.widget-inner */}
@@ -235,7 +294,7 @@ class SingleBook extends Component {
                     </div>
                     {/* right section */}
                 </div>
-            </div>
+            </div >
         );
     }
 }

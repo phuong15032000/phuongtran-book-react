@@ -145,8 +145,8 @@ class Index extends Component {
                         <div className="tm-left-inner-container">
                             <ul className="nav nav-stacked templatemo-nav">
                                 <li><a href="/index" className="active"><i className="fa fa-home" />Homepage</a></li>
-                                <li><a href="/login"><i className="fa fa-sign-in" />Login</a></li>
-                                <li><a href="/register"><i className="fa fa-pencil-square-o" aria-hidden="true" />Register</a></li>
+                                <li><a href="/login"><i className="fa fa-sign-in" />Sign in</a></li>
+                                <li><a href="/register"><i className="fa fa-pencil-square-o" aria-hidden="true" />Sign up</a></li>
                             </ul>
                         </div>
                     </div>

@@ -19,6 +19,7 @@ import Admin_edit_book from "./components/admin-edit-book.component";
 import Admin_detail_book from "./components/admin-detail-post.component";
 import Admin_manage_book from "./components/admin-book-manager.component"
 import Admin_mange_user from "./components/admin-user-manage.component"
+import Superadmin_manage_admin from "./components/sa-admin-management.component"
 function App() {
   if (!localStorage.getItem("user")) {
     return (
@@ -46,6 +47,20 @@ function App() {
       )
     }
     else {
+      if (JSON.parse(localStorage.getItem('user')).role.id == 3) {
+        return (
+          <Switch>
+            <Route exact path={["/", "/index"]} component={Admin_Index} />
+            <Route exact path={"/login"} component={Login} />
+            <Route exact path={"/book/:id"} component={Admin_detail_book} />
+            <Route exact path={"/mybooks"} component={Admin_my_book} />
+            <Route exact path={"/books-management"} component={Admin_manage_book} />
+            <Route exact path={"/users-management"} component={Superadmin_manage_admin} />
+            <Route exact path={"/add-book"} component={Admin_add_book} />
+            <Route exact path={"/edit-book/:id"} component={Admin_edit_book} />
+          </Switch>
+        )
+      } else
       return (
         <Switch>
           <Route exact path={["/", "/index"]} component={User_Index} />

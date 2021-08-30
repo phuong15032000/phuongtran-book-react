@@ -4,6 +4,8 @@ import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import AuthService from "../services/auth.service";
 import { withRouter } from 'react-router-dom';
+import GoogleLogin from 'react-google-login';
+import axios from 'axios'
 class Login extends Component {
     constructor(props) {
         super(props);
@@ -61,19 +63,19 @@ class Login extends Component {
                             message: "This account has been disabled!"
                         });
                     }
-                    else if (resMessage === "Request failed with status code 403"){
+                    else if (resMessage === "Request failed with status code 403") {
                         this.setState({
                             loading: false,
                             message: "Username or password is incorrect!"
                         });
                     }
-                    else if (resMessage === "Request failed with status code 500"){
+                    else if (resMessage === "Request failed with status code 500") {
                         this.setState({
                             loading: false,
                             message: "Username is not available!"
                         });
                     }
-                    else if (resMessage === "Network Error"){
+                    else if (resMessage === "Network Error") {
                         this.setState({
                             loading: false,
                             message: "Cannot connect to server! Please try again later."
@@ -93,8 +95,35 @@ class Login extends Component {
             });
         }
     }
-
+    signup(res) {
+        const googlePojo = {
+            email: res.profileObj.email,
+            givenName: res.profileObj.givenName,
+            familyName: res.profileObj.familyName,
+            picture: res.profileObj.imageUrl,
+            accessToken: res.Zb.accessToken
+        };
+        debugger;
+        axios.post(`http://localhost:8080/api/auth/login-google`, googlePojo)
+            // .then((result) => {
+            //     let responseJson = result;
+            //     sessionStorage.setItem("user", JSON.stringify(result));
+            //     this.props.history.push('/index')
+            // });
+            .then(response => {
+                if (response.data.token) {
+                    localStorage.setItem("user", JSON.stringify(response.data));
+                    localStorage.setItem("token", JSON.stringify(response.data.token));
+                    this.props.history.push('/index')
+                }});
+    };
     render() {
+        const responseGoogle = (response) => {
+            console.log(response);
+            var res = response.profileObj;
+            console.log(res);
+            this.signup(response);
+        }
         return (
             <div>
                 <link href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,700" rel="stylesheet" type="text/css" />
@@ -173,6 +202,7 @@ class Login extends Component {
                                                 </div>
                                             )}
                                             <CheckButton
+
                                                 style={{ display: "none" }}
                                                 ref={c => {
                                                     this.checkBtn = c;
@@ -183,6 +213,15 @@ class Login extends Component {
                                             <a className href="/register"><small>Sign up now!</small></a>
                                         </Form>
                                     </div>
+
+                                    <GoogleLogin
+                                        className="form-button button-l margin-b"
+                                        clientId="960487106143-tl1iot8cd2lt387tlj9d4pfgg7mpo735.apps.googleusercontent.com"
+                                        buttonText="Login"
+                                        onSuccess={responseGoogle}
+                                        onFailure={responseGoogle}
+                                        cookiePolicy={'single_host_origin'}
+                                    />
                                 </div>
                             </div>
                         </div>

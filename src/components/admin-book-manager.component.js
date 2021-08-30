@@ -9,7 +9,7 @@ class BookManagement extends Component {
         super(props);
         this.handlePageChange = this.handlePageChange.bind(this);
         this.handlePageSizeChange = this.handlePageSizeChange.bind(this);
-        //this.logout = this.logout.bind(this);
+        this.logout = this.logout.bind(this);
         this.onChangeKeyword = this.onChangeKeyword.bind(this);
         this.onChangeOrderBy = this.onChangeOrderBy.bind(this);
         this.state = {
@@ -169,11 +169,10 @@ class BookManagement extends Component {
                         <div className="tm-left-inner-container">
                             <ul className="nav nav-stacked templatemo-nav">
                                 <li><a href="/index"><i className="fa fa-home" />Homepage</a></li>
-                                <li><a href="/add-book"><i className="fa fa-pencil" />Add book</a></li>
                                 <li><a href="/mybooks"><i className="fa fa-sticky-note" />My books</a></li>
-                                <li><a href="/books-management"  className="active"><i className="fa fa-sticky-note" />Books</a></li>
+                                <li><a href="/books-management" className="active"><i className="fa fa-sticky-note" />Books</a></li>
                                 <li><a href="/users-management"><i className="fa fa-sticky-note" />Users</a></li>
-                                <li><a onClick={this.logout}><i className="fa fa-pencil-square-o" aria-hidden="true" />Log out</a></li>
+                                <li><a href="javascript:void(0);" onClick={this.logout}><i className="fa fa-pencil-square-o" aria-hidden="true" />Log out</a></li>
                             </ul>
                         </div>
                     </div>
@@ -181,7 +180,7 @@ class BookManagement extends Component {
                     <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg right-container">
                         <h1 className="logo-right hidden-xs margin-bottom-60">Book</h1>
                         <div className="tm-right-inner-container">
-                            <h1 className="templatemo-header">Welcome to Novahub Books</h1>
+                            <h1 className="templatemo-header">Books management page for ADMIN</h1>
                             <div>
                                 <div className="col-lg-8 col-md-12 col-sm-12 col-xs-12">
                                     <table style={{ width: "100%", tableLayout: "fixed" }}>
@@ -240,39 +239,46 @@ class BookManagement extends Component {
                             </div>
                             <br /><br /><br />
                             <div>
-                                <table style={{ width: "100%", tableLayout: "fixed" }} class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Title</th>
-                                            <th>Created at</th>
-                                            <th scope="col">Author</th>
-                                            <th scope="col">Enabled</th>
-                                            <th scope="col">Action</th>
-                                        </tr>
-                                    </thead>
-
-                                    <tbody>
-                                        {this.state.books.map((book, index) => (
+                                {this.state.books.length == 0
+                                    ? <div>
+                                        <br /><br/><br/><br/>
+                                        <h2>0 result match</h2>
+                                    </div>
+                                    :
+                                    <table style={{ width: "100%", tableLayout: "fixed" }} class="table table-striped">
+                                        <thead>
                                             <tr>
-                                                <th scope="row"><a href={"/edit-book/" + book.id}>{book.title}</a></th>
-                                                <td>{this.toSqlDatetime(new Date(book.createdAt))}</td>
-                                                <td>{book.author}</td>
-                                                <td>
-                                                    {book.enabled
-                                                        ? <button style={{ width: "80px" }} onClick={() => this.disableBook(book.id)} className="btn btn-success">Enabled </button>
-                                                        : <button style={{ width: "80px" }} onClick={() => this.enableBook(book.id)} className="btn btn-danger">Disabled</button>
-                                                    }
-                                                </td>
-                                                <th>
-                                                    <a href={"/edit-book/" + book.id} class="btn btn-primary">Edit</a>
-                                                    &nbsp;
-                                                    <button class="btn btn-primary" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this book?')) this.deleteBook(book.id) }}>Delete</button>
-                                                </th>
+                                                <th scope="col">Title</th>
+                                                <th>Created at</th>
+                                                <th scope="col">Author</th>
+                                                <th scope="col">Enabled</th>
+                                                <th scope="col">Action</th>
                                             </tr>
+                                        </thead>
 
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        <tbody>
+                                            {this.state.books.map((book, index) => (
+                                                <tr>
+                                                    <th scope="row"><a href={"/edit-book/" + book.id}>{book.title}</a></th>
+                                                    <td>{this.toSqlDatetime(new Date(book.createdAt))}</td>
+                                                    <td>{book.author}</td>
+                                                    <td>
+                                                        {book.enabled
+                                                            ? <button style={{ width: "80px" }} onClick={() => this.disableBook(book.id)} className="btn btn-success">Enabled </button>
+                                                            : <button style={{ width: "80px" }} onClick={() => this.enableBook(book.id)} className="btn btn-danger">Disabled</button>
+                                                        }
+                                                    </td>
+                                                    <th>
+                                                        <a href={"/edit-book/" + book.id} class="btn btn-primary">Edit</a>
+                                                        &nbsp;
+                                                        <button class="btn btn-primary" onClick={(e) => { if (window.confirm('Are you sure you wish to delete this book?')) this.deleteBook(book.id) }}>Delete</button>
+                                                    </th>
+                                                </tr>
+
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                }
                             </div>
                             <footer>
                                 <p className="col-lg-6 col-md-6 col-sm-12 col-xs-12 templatemo-copyright">Copyright © 2021 by phuongtran@novahub.vn

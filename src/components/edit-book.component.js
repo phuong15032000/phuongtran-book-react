@@ -59,12 +59,14 @@ class Register extends Component {
                 this.state.book,
                 this.state.book.id
             ).then(
+                
                 response => {
                     this.setState({
                         book: response.data,
                         message: "Edit book successful",
                         successful: true
                     });
+                    this.props.history.push("/mybooks");
                     console.log(response.data)
                 },
                 error => {
@@ -92,9 +94,11 @@ class Register extends Component {
     }
     onChangeDescription(e) {
         this.state.book.description = e.target.value
+        console.log(this.state.book)
     }
     onChangeImgThumpUrl(e) {
         this.state.book.image = e.target.value
+        console.log(this.state.book.image)
     }
     logout() {
         if (window.confirm("Do you want to logout?") == true) {
@@ -135,9 +139,8 @@ class Register extends Component {
                         <div className="tm-left-inner-container">
                             <ul className="nav nav-stacked templatemo-nav">
                                 <li><a href="/index"><i className="fa fa-home" />Homepage</a></li>
-                                <li><a href="/add-book" className="active"><i className="fa fa-pencil" />Add book</a></li>
-                                <li><a href="/mybooks"><i className="fa fa-sticky-note" />My books</a></li>
-                                <li><a onClick={this.logout}><i className="fa fa-pencil-square-o" aria-hidden="true" />Log out</a></li>
+                                <li><a href="/mybooks" className="active"><i className="fa fa-sticky-note" />My books</a></li>
+                                <li><a href="javascript:void(0);" onClick={this.logout}><i className="fa fa-pencil-square-o" aria-hidden="true" />Log out</a></li>
                             </ul>
                         </div>
                     </div>
@@ -158,7 +161,7 @@ class Register extends Component {
                                             <legend className="text-center">Edit book<span className="req" />
                                             </legend>
                                             <div className="form-group">
-                                                <label><span className="req">* </span> Title: </label>
+                                                <label><span className="req" style={{color: "red"}}>* </span> Title: </label>
                                                 <input
                                                     defaultValue={this.state.book.title}
                                                     id="id-input-title"
@@ -169,7 +172,7 @@ class Register extends Component {
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <label><span className="req">* </span> Author: </label>
+                                                <label><span className="req" style={{color: "red"}}>* </span> Author: </label>
                                                 <input
                                                     defaultValue={this.state.book.author}
                                                     id="id-input-author"
@@ -180,7 +183,7 @@ class Register extends Component {
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <label htmlFor="phonenumber"><span className="req">* </span> Image thumpnail URL: </label>
+                                                <label htmlFor="phonenumber"><span className="req" style={{color: "red"}}>* </span> Image thumpnail URL: </label>
                                                 <input
                                                     defaultValue={this.state.book.image}
                                                     id="id-input-img"
@@ -191,18 +194,17 @@ class Register extends Component {
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <label htmlFor="phonenumber"><span className="req">* </span> Description: </label>
+                                                <label htmlFor="phonenumber"> Description: </label>
                                                 <textarea
-                                                    style={{ minWidth: "100%", maxWidth: "100%" }}
+                                                    style={{ minWidth: "100%", maxWidth: "100%" , minHeight: "150px"}}
                                                     defaultValue={this.state.book.description}
                                                     id="id-input-description"
                                                     className="form-control "
-                                                    required="required"
                                                     onChange={this.onChangeDescription}
                                                 />
                                             </div>
                                             <div className="form-group">
-                                                <button style={{ float: "right" }} className="btn btn-success" name="submit_reg">Submit</button>
+                                                <button style={{ float: "right" }} className="btn btn-success" name="submit_reg">Edit</button>
                                             </div>
                                         </fieldset>
                                         {this.state.message && (

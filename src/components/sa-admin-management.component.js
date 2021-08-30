@@ -17,7 +17,6 @@ class BookManagement extends Component {
         this.checkNull = this.checkNull.bind(this);
         this.email_validate = this.email_validate.bind(this);
         this.password_validate = this.password_validate.bind(this);
-        this.test = this.test.bind(this);
         this.handleRegister = this.handleRegister.bind(this);
         this.state = {
             isOpen: false,
@@ -33,9 +32,6 @@ class BookManagement extends Component {
                 }
             }
         };
-    }
-    test() {
-        console.log(this.state.user)
     }
     openModal = () => this.setState({ isOpen: true });
     closeModal = () => this.setState({ isOpen: false });
@@ -69,7 +65,7 @@ class BookManagement extends Component {
         //Set the colors we will be using ...
         var goodColor = "#66cc66";
         var badColor = "#ff6666";
-        if (document.getElementById('pass1').value === document.getElementById('pass2').value) {
+        if ((document.getElementById('pass1').value === document.getElementById('pass2').value) && document.getElementById('pass1').value!="" && document.getElementById('pass1').value!=null) {
             pass2.style.backgroundColor = goodColor;
             message.style.color = goodColor;
             message.innerHTML = "Passwords Match";
@@ -105,11 +101,44 @@ class BookManagement extends Component {
             this.handleRegister();
         }
     }
+    handleRegister() {
+        UserDataService.addUser(
+            this.state.user
+        ).then(
+            response => {
+                this.setState({
+                    message: response.data,
+                    successful: true
+                });
+                console.log(response.data)
+                this.retrieveUsers()
+                this.closeModal()
+            },
+            error => {
+                const resMessage =
+                    (error.response &&
+                        error.response.data &&
+                        error.response.data.message) ||
+                    error.message ||
+                    error.toString();
+                if (resMessage === "Request failed with status code 404") {
+                    this.setState({
+                        loading: false,
+                        message: "Email has been registered!"
+                    });
+                }
+                else this.setState({
+                    successful: false,
+                    message: `Register successfully! <a href="/login">Click here to login</a>`
+                });
+            }
+        );
+    }
     componentDidMount() {
         this.retrieveUsers();
     }
     retrieveUsers() {
-        UserDataService.findAll()
+        UserDataService.findAllRole()
             .then(response => {
                 this.setState({
                     users: response.data
@@ -148,38 +177,25 @@ class BookManagement extends Component {
                 console.log(e);
             });
     }
-    handleRegister() {
-        UserDataService.addUser(
-            this.state.user
-        ).then(
-            response => {
-                this.setState({
-                    message: response.data,
-                    successful: true
-                });
-                console.log(response.data)
-                this.retrieveUsers()
-                this.closeModal()
-            },
-            error => {
-                const resMessage =
-                    (error.response &&
-                        error.response.data &&
-                        error.response.data.message) ||
-                    error.message ||
-                    error.toString();
-                if (resMessage === "Request failed with status code 404") {
-                    this.setState({
-                        loading: false,
-                        message: "Email has been registered!"
-                    });
-                }
-                else this.setState({
-                    successful: false,
-                    message: `Register successfully! <a href="/login">Click here to login</a>`
-                });
-            }
-        );
+    setAdmin(id) {
+        UserDataService.setAdmin(id)
+            .then(response => {
+                this.retrieveUsers();
+                console.log(response.data);
+            })
+            .catch(e => {
+                console.log(e);
+            });
+    }
+    removeAdmin(id) {
+        UserDataService.removeAdmin(id)
+            .then(response => {
+                this.retrieveUsers();
+                console.log(response.data);
+            })
+            .catch(e => {
+                console.log(e);
+            });
     }
     render() {
         return (
@@ -215,12 +231,12 @@ class BookManagement extends Component {
                     <div className="col-lg-6 col-md-6 col-sm-6 col-xs-12 white-bg right-container">
                         <h1 className="logo-right hidden-xs margin-bottom-60">Book</h1>
                         <div className="tm-right-inner-container">
-                            <h1 className="templatemo-header">Users management page for ADMIN</h1>
+                            <h1 className="templatemo-header">Users management page for SUPERADMIN</h1>
                             <div>
                                 <Button style={{ marginBottom: "10px" }} variant="primary" onClick={this.openModal}>
                                     Add a new user
                                 </Button>
-                                <Modal show={this.state.isOpen} onHide={this.closeModal} style={{ opacity: 1, marginLeft: "5%", paddingTop: "10%", height: "800px" }} >
+                                <Modal show={this.state.isOpen} onHide={this.closeModal} style={{ opacity: 1, marginLeft: "5%", paddingTop: "14%", height: "800px" }} >
                                     <Modal.Body>
                                         <fieldset>
                                             <legend className="text-center">Fill your information to below form. <span className="req" />
@@ -250,6 +266,7 @@ class BookManagement extends Component {
                                             <div className="form-group">
                                                 <label><span className="req" style={{ color: "red" }}>* </span> Email:</label>
                                                 <input
+                                                defaultValue={this.state.user.email}
                                                     id="ip_email"
                                                     className="form-control"
                                                     type="text"
@@ -310,7 +327,7 @@ class BookManagement extends Component {
                                             <th>Id</th>
                                             <th>Active</th>
                                             <th>Email</th>
-                                            <th>Name</th>
+                                            <th>Role</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -324,11 +341,16 @@ class BookManagement extends Component {
                                                     : <i className="fa fa-times"></i>
                                                 }</td>
                                                 <td><a href={"/admin-user/" + user.id}>{user.email}</a></td>
-                                                <td><a href={"/admin-user/" + user.id}>{user.firstName} {user.lastName}</a></td>
+                                                <td>{user.role.name}</td>
                                                 <th>
                                                     {!user.enabled
                                                         ? <button style={{ width: "80px" }} onClick={() => this.enableUser(user.id)} className="btn btn-danger">Disabled</button>
                                                         : <button style={{ width: "80px" }} onClick={() => this.disableUser(user.id)} className="btn btn-success">Enabled</button>
+                                                    }
+                                                    &nbsp;
+                                                    {user.role.id == 1
+                                                        ? <button style={{ width: "125px" }} onClick={() => this.removeAdmin(user.id)} className="btn btn-success">Remove admin</button>
+                                                        : <button style={{ width: "125px" }} onClick={() => this.setAdmin(user.id)} className="btn btn-success">Set admin</button>
                                                     }
                                                 </th>
                                             </tr>

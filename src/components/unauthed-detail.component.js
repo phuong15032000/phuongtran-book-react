@@ -138,11 +138,10 @@ class SingleBook extends Component {
                             <div className="row">
                                 <div className="col-md-12">
                                     <div className="post-blog">
-                                        <div className="blog-content">
+                                        <div className="blog-content" style={{ marginBottom: "2%" }}>
                                             <h3>{this.state.book.title}</h3>
-                                            <span className="meta-date"><a href="#">{this.toSqlDatetime(new Date(this.state.book.createdAt))}</a></span>
-                                            <span className="meta-comments"><a href="#blog-comments">{this.state.book.commentList.length} Comments</a></span>
-                                            <span className="meta-author"><a href="#blog-author">By: {this.state.book.author}</a></span><br /><br />
+                                            <h5>By: <a href="#blog-author">{this.state.book.author}</a></h5>
+                                            <span>{this.toSqlDatetime(new Date(this.state.book.createdAt))}</span>
                                         </div> {/* /.blog-content */}
                                         <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                             <img style={{ height: "100%", width: "100%", float: "left" }} src={this.state.book.image} alt="" />
@@ -178,7 +177,7 @@ class SingleBook extends Component {
                                     </div> {/* /.blog-post-comments */}
                                 </div> {/* /.col-md-12 */}
                             </div> {/* /.row */}
-                            
+
                             <footer>
                                 <p className="col-lg-6 col-md-6 col-sm-12 col-xs-12 templatemo-copyright">Copyright © 2021 by phuongtran@novahub.vn
                                     {/* Credit: www.templatemo.com */}

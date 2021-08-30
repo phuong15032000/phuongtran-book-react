@@ -28,19 +28,25 @@ class BookDataService {
         return axios.post(API_URL + `/admin/books`, book, { headers: authHeader() })
     }
     editBook(book, id) {
-        return axios.put(API_URL + `/books/`+id, book, { headers: authHeader() })
+        return axios.put(API_URL + `/books/` + id, book, { headers: authHeader() })
     }
     enableBook(id) {
-        return axios.put(API_URL + `/admin/books/`+id+`/enable`,"", { headers: authHeader() })
+        return axios.put(API_URL + `/admin/books/` + id + `/enable`, "", { headers: authHeader() })
     }
     disableBook(id) {
-        return axios.put(API_URL + `/admin/books/`+id+`/disable`,"", { headers: authHeader() })
+        return axios.put(API_URL + `/admin/books/` + id + `/disable`, "", { headers: authHeader() })
     }
-    getAllBook(){
+    getAllBook() {
         return axios.get(API_URL + `/admin/books`, { headers: authHeader() })
     }
-    deleteBook(id){
-        return axios.delete(API_URL + `/books/`+id, { headers: authHeader() })
+    deleteBook(id) {
+        return axios.delete(API_URL + `/books/` + id, { headers: authHeader() })
+    }
+    getCommentById(id) {
+        return axios.get(API_URL + `/comments/` + id, { headers: authHeader() })
+    }
+    editComment(id, comment) {
+        return axios.put(API_URL + `/comments/` + id, comment, { headers: authHeader() })
     }
 }
 
